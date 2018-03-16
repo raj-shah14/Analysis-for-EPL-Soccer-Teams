@@ -49,6 +49,13 @@ for i in zip(Ateam_numb,Ateam_name):
 from sklearn.model_selection import train_test_split
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=0)
 
+from sklearn.decomposition import PCA
+pca=PCA(n_components=None)
+X_train=pca.fit_transform(X_train)
+X_test=pca.transform(X_test)
+ev=pca.explained_variance_ratio_
+
+
 clf_A=LogisticRegression(random_state=42)
 clf_B=SVC(random_state =9,kernel='linear')
 clf_C=xgb.XGBClassifier(seed=82)
@@ -60,12 +67,23 @@ C=clf_C.fit(X_train,y_train)
 
 print("LR")
 print(LabelEncoder_res.inverse_transform(A.predict(X_test)))
+y_test_lr=A.predict(X_test)
+y_test_lr=y_test_lr.astype('int')
 
 print("SVM")
 print(LabelEncoder_res.inverse_transform(B.predict(X_test)))
+y_test_svm=B.predict(X_test)
+y_test_svm=y_test_svm.astype('int')
 
 print("XGB")
 print(LabelEncoder_res.inverse_transform(C.predict(X_test)))
+y_test_xgb=C.predict(X_test)
+y_test_xgb=y_test_xgb.astype('int')
 
 print("Actual")
 print(LabelEncoder_res.inverse_transform(y_test))
+
+from sklearn.metrics import confusion_matrix
+cmlr=confusion_matrix(y_test,y_test_lr)    
+cmsvm=confusion_matrix(y_test,y_test_svm)    
+cmxgb=confusion_matrix(y_test,y_test_xgb)    
